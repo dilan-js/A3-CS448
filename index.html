@@ -1,0 +1,93 @@
+<html> 
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+
+<!-- 
+<div class="slidecontainer">
+    <input type="range" min="1" max="100" value="50" class="slider" id="adjustRadii">
+  </div> -->
+  
+<script> 
+
+
+//Read the data
+d3.csv("data.csv").then( function(data) {
+var circleOne = null;
+var circleTwo = null;
+  // Set up size
+var mapWidth = 1000;
+var mapHeight = 750;
+
+var clickCount = 0; 
+
+// This is the mapping between <longitude, latitude> position to <x, y> pixel position on the map
+// projection is a function and it has an inverse:
+// projection([lon, lat]) returns [x, y]
+// projection.invert([x, y]) returns [lon, lat]
+
+// Add an SVG element to the DOM
+var svg = d3.select('body').append('svg')
+  .attr('width', mapWidth)
+  .attr('height', mapHeight);
+  
+// Add SVG map at correct size, assuming map is saved in a subdirectory called `data`
+svg.append('image')
+  .attr('width', mapWidth)
+  .attr('height', mapHeight)
+  .attr('xlink:href', 'map.svg');
+ 
+ // Set up projection that the map is using
+var scale = 190000;
+var projection = d3.geoMercator()
+  .center([-122.061578, 37.385532]) 
+  .scale(scale)
+  .translate([mapWidth / 2, mapHeight / 2]);
+
+console.log(data); 
+var pnt = 0; 
+data.forEach(item => {
+    var projectedLocation = projection([parseFloat(item.Longitude), parseFloat(item.Latitude)]);
+    var circle = svg.append('circle')
+    .attr("id", "data_circle_" +pnt)
+    .attr('cx', projectedLocation[0])
+    .attr('cy', projectedLocation[1])
+    .attr('r', 1)
+    .on("click", (d, event) => {
+        if(circleOne == null || clickCount % 2 == 0 ){
+            circleOne = d3.select(d.currentTarget).attr("id")
+        }else{
+            circleTwo = d3.select(d.currentTarget).attr("id")
+        }
+        console.log("You selected this circle " , d3.select(d.currentTarget).attr("id")); 
+        console.log(clickCount); 
+        clickCount++;
+    });
+    pnt++; 
+    
+});
+
+
+// function for adjusting the radii 
+let slider = d3.select('body').append("input");
+slider
+.datum(data)
+.attr("type", "range")
+.attr("class", "slider")
+.attr("min", 1)
+.attr("max", 50)
+//.attr("value", 25)
+.attr("id", "adjustRadii"); 
+
+slider.on("input", (d) => {
+    let radius = d3.select("#adjustRadii").property("value"); 
+   // console.log(radius); 
+    d3.select('#data_circle_1000').attr("r", radius); 
+
+});
+
+
+
+})
+
+</script> 
+</html>
