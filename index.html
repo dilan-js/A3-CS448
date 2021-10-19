@@ -1,12 +1,45 @@
 <html> 
-<script src="https://d3js.org/d3.v7.min.js"></script>
 
+<style>
+  body {
+    padding: 50px;
+  }
+  section{
+    display:block !important;
+  }
 
-<!-- 
-<div class="slidecontainer">
-    <input type="range" min="1" max="100" value="50" class="slider" id="adjustRadii">
-  </div> -->
-  
+  .checkbox {
+    float: left !important;
+    width: 100px !important;
+  }
+  input {
+    text-decoration: none !important;
+  }
+  .slider{
+    width: 25% !important;
+  }
+  #scoreFilters{
+    padding-top: 30px;
+  }
+</style>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://d3js.org/d3.v7.min.js"></script> 
+
+<h1>South Bay Restaurant Inspection Score Finder</h1>
+<p> Dilan Nana, Dana Chiueh </p>
+<section>
+<div id="checkboxFilters">Filter by Zipcode</div>
+</section>
+<section>
+<div id="scoreFilters">
+    Score range: <input type="range" value="50%" min="1" max="100" class="slider" id="ScoreRange">
+</div>
+</section>
+<section>
+<p> Adjust the radii of the circles below by sliding here: </p>
+</section>
 <script> 
 
 
@@ -19,6 +52,24 @@ var mapWidth = 1000;
 var mapHeight = 750;
 
 var clickCount = 0; 
+
+  // function for adjusting the radii 
+  let slider = d3.select('body').append("input");
+  slider
+  .datum(data)
+  .attr("type", "range")
+  .attr("class", "slider")
+  .attr("min", 1)
+  .attr("max", 50)
+  //.attr("value", 25)
+  .attr("id", "adjustRadii"); 
+
+  slider.on("input", (d) => {
+      let radius = d3.select("#adjustRadii").property("value"); 
+    // console.log(radius); 
+      d3.select('#data_circle_1000').attr("r", radius); 
+
+  });
 
 // This is the mapping between <longitude, latitude> position to <x, y> pixel position on the map
 // projection is a function and it has an inverse:
@@ -66,28 +117,34 @@ data.forEach(item => {
     
 });
 
-
-// function for adjusting the radii 
-let slider = d3.select('body').append("input");
-slider
-.datum(data)
-.attr("type", "range")
-.attr("class", "slider")
-.attr("min", 1)
-.attr("max", 50)
-//.attr("value", 25)
-.attr("id", "adjustRadii"); 
-
-slider.on("input", (d) => {
-    let radius = d3.select("#adjustRadii").property("value"); 
-   // console.log(radius); 
-    d3.select('#data_circle_1000').attr("r", radius); 
-
+// Processing filters
+d3.selectAll('#ScoreRange')
+.on("change", function() {
+  let score = this.value;
+  console.log(score);
 });
 
+// Find unique zipcodes using the slice javascript method to parse the "Adress" data for zip codes
+var zipData = d3.group(data, d => d.Adress.slice(d.Adress.length - 5)); 
+//console.log(zipData)
 
+// Use the unique zipcodes to instantiate checkboxes
+var checkBoxes = d3.select("#checkboxFilters")
+    .selectAll("div")
+    .data(zipData)
+    .enter()
+    .append("div")
+    .attr("class", "checkbox");
 
-})
+  checkBoxes.append("input")
+    .attr("type", "checkbox")
+    .attr("id", d => d[0])
+    .attr("value", d => d[0]);
+  checkBoxes.append("label")
+    .attr('for', d => d[0])
+    .text(d => d[0]);
+    
+});
 
 </script> 
 </html>
