@@ -54,21 +54,34 @@ var mapHeight = 750;
 var clickCount = 0; 
 
   // function for adjusting the radii 
-  let slider = d3.select('body').append("input");
-  slider
-  .datum(data)
+  let slider1 = d3.select('body').append("input");
+  let slider2 = d3.select('body').append("input");
+  slider1
   .attr("type", "range")
   .attr("class", "slider")
   .attr("min", 1)
   .attr("max", 50)
   //.attr("value", 25)
-  .attr("id", "adjustRadii"); 
+  .attr("id", "adjustRadii1"); 
 
-  slider.on("input", (d) => {
-      let radius = d3.select("#adjustRadii").property("value"); 
+  slider2
+  .attr("type", "range")
+  .attr("class", "slider")
+  .attr("min", 1)
+  .attr("max", 50)
+  //.attr("value", 25)
+  .attr("id", "adjustRadii2"); 
+
+  slider1.on("input", (d) => {
+      let radius = d3.select("#adjustRadii1").property("value"); 
     // console.log(radius); 
-      d3.select('#data_circle_100').attr("r", radius); 
+      d3.select('#main_circle_1').attr("r", radius); 
+  });
 
+  slider2.on("input", (d) => {
+      let radius = d3.select("#adjustRadii2").property("value"); 
+    // console.log(radius); 
+      d3.select('#main_circle_2').attr("r", radius); 
   });
 
 // This is the mapping between <longitude, latitude> position to <x, y> pixel position on the map
@@ -124,62 +137,73 @@ const data2 = [
 // console.log({data2});
 var index = 0;
 data2.forEach(item => { 
+      
+let drag = d3.drag()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended);
+
   var projectedLocation = projection([parseFloat(item.Longitude), parseFloat(item.Latitude)]);
+
   console.log({projectedLocation});
   var circle = svg.append('circle')
     .attr("id", "main_circle_" + item.id)
     .attr('cx', projectedLocation[0])
     .attr('cy', projectedLocation[1])
     .attr('r', 50)
-    .style('fill', item.color);
+    .style('fill', item.color)
+    .call(drag); 
+
+
   index++;
-  // console.log(circle);
 });
 
-let drag = d3.drag()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended);
+ function dragstarted(event, d) {
+    d3.select(this).raise().attr("stroke", "black");
+  }
 
-var focus = svg.append("g")
-                .attr("transform", "translate(" + 50 + "," + 20 + ")");
+  function dragged(event, d) {
+    let start = Date.now(); 
+    d3.select(this).attr("cx",event.x).attr("cy", event.y);
+    let mainCircle1 = d3.select("#main_circle_1"); 
+    let mainCircle2 = d3.select("#main_circle_2"); 
 
-focus.selectAll('circle')
-    .data(data2)
-    .enter()
-    .append('circle')
-    .attr('r', 55.0)
-    .attr('cx', function(d) { 
-      console.log("LINE 145 : ", {d});
-      return parseFloat(d.Longitude);  
-      })
-    .attr('cy', function(d) { return parseFloat(d.Latitude); })
-    .style('cursor', 'pointer')
-    .style('fill', (d) => d.color);
+    let mainCircle1_CX = parseFloat(mainCircle1.attr("cx")); 
+    let mainCircle1_CY = parseFloat(mainCircle1.attr("cy")); 
+    let mainCircle2_CX = parseFloat(mainCircle2.attr("cx")); 
+    let mainCircle2_CY = parseFloat(mainCircle2.attr("cy")); 
+    
+    let r1 = parseFloat(mainCircle1.attr("r")); 
+    let r2 = parseFloat(mainCircle2.attr("r")); 
 
-focus.selectAll('circle')
-        .call(drag);
- 
-function dragstarted(d) {
-    console.log("Drag Started");
-    d3.select(this).raise().classed('active', true);
+    for (let i = 0; i < pnt; i++ ){
+       let circle = d3.select("#data_circle_" +i); 
+       let x2 = parseFloat(circle.attr("cx")); 
+       let y2 = parseFloat(circle.attr("cy")); 
+       
+
+       let highlight1 = isWithinRadius(x2,mainCircle1_CX,  y2,mainCircle1_CY, r1);
+       let highlight2 = isWithinRadius(x2,mainCircle2_CX,  y2,mainCircle2_CY, r2);
+
+       if(highlight1 && highlight2){
+          circle.style("fill", "yellow");
+       }else{
+         circle.style("fill", "rgba(0,0,0,0.8)");
+       }
+    }
+    let end = Date.now(); 
+    console.log("EVENT TOOK MILLISECONDS ", (end-start)); 
+  }
+
+  function dragended(event, d) {
+    d3.select(this).attr("stroke", null);
+  }
+
+//distance formula
+function isWithinRadius(x1, x2, y1, y2, r){
+  let dist = Math.sqrt(Math.pow((x2 - x1),2) + Math.pow((y2 - y1),2));
+  return 0 <= dist && dist <= r;
 }
-
-function dragged(d) {
-  alert("Dragged");
-    d[0] = x.invert(d3.event.x);
-    d[1] = y.invert(d3.event.y);
-    console.log({d});
-    d3.select(this)
-        .attr('cx', x(d[0]))
-        .attr('cy', y(d[1]))
-    focus.select('path').attr('d', line);
-}
-
-function dragended(d) {
-    d3.select(this).classed('active', false);
-}
-
 // Processing filters
 d3.selectAll('#ScoreRange')
 .on("change", function() {
