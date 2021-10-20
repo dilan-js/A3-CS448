@@ -73,7 +73,7 @@ var clickCount = 0;
   .attr("id", "adjustRadii2"); 
 
   slider1.on("input", (d) => {
-      let radius = d3.select("#adjustRadii1").property("value"); 
+      let radius = d3.select("#adjustRadii1").property("value");   
     // console.log(radius); 
       d3.select('#main_circle_1').attr("r", radius); 
   });
