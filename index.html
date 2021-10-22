@@ -16,7 +16,7 @@
     text-decoration: none !important;
   }
   .slider{
-    width: 25% !important;
+    width: 50% !important;
   }
   #scoreFilters{
     padding-top: 30px;
@@ -26,9 +26,18 @@
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://d3js.org/d3.v7.min.js"></script> 
-
+< /head> 
+  <body> 
 <h1>South Bay Restaurant Inspection Score Finder</h1>
 <p> Dilan Nana, Dana Chiueh </p>
+<p>Explore the restaurant inspection scores of all South Bay restaurants!
+  Filter by zipcode, city or grade, and explore the interactive map by hovering to learn
+about individual restaurants. Drag the circles around or adjust their radii with the sliders below. </p>
+<div id="circleRadii"></div>
+<div id="zipcodes"><h4>Zipcode</h4></div>
+<div id="cities"><h4>City</h4></div>
+<div id="grades"><h4>Grade</h4></div>
+  
 <section>
 <div id="checkboxFilters">Filter by Zipcode</div>
 </section>
@@ -216,7 +225,7 @@ var zipData = d3.group(data, d => d.Adress.slice(d.Adress.length - 5));
 //console.log(zipData)
 
 // Use the unique zipcodes to instantiate checkboxes
-var checkBoxes = d3.select("#checkboxFilters")
+/*var checkBoxes = d3.select("#checkboxFilters")
     .selectAll("div")
     .data(zipData)
     .enter()
@@ -231,7 +240,54 @@ var checkBoxes = d3.select("#checkboxFilters")
     .attr('for', d => d[0])
     .text(d => d[0]);
     
+});*/ 
+  
+  
+
+/*
+FILTERS:
+- when a filter is activated, that becomes a requirement
+- have a function that checks against every single filter and returns yes or no
+
+
+d3.selectAll(".checkbox")
+.on("change", function() {
+  let score = this.id;
+  console.log(score);
 });
 
+function fitsFilters(circle){
+   
+}
+*/
+
+
+  // Find unique zipcodes using the slice javascript method to parse the "Adress" data for zip codes
+var zipcodes = d3.group(data, d => d.Adress.split(",")[2].slice(4).substring(0,5)); 
+var cities = d3.group(data, d => d.Adress.split(",")[1].toUpperCase());
+var grades = d3.group(data, d => d.Grade);
+
+  function createCheckboxes(boxData, id){
+    var checkBoxes = d3.select(id)
+      .selectAll("div")
+      .data(boxData)
+      .enter()
+      .append("div")
+      .attr("class", "checkbox-inline");
+    checkBoxes.append("input")
+      .attr("type", "checkbox")
+      .attr("id", d => d[0])
+      .attr("value", d => d[0]);
+    checkBoxes.append("label")
+      .attr('for', d => d[0])
+      .text(d => d[0]);
+  }
+
+createCheckboxes(zipcodes, "#zipcodes");
+createCheckboxes(cities, "#cities");
+createCheckboxes(grades, "#grades");
+  
+
 </script> 
+  </body> 
 </html>
