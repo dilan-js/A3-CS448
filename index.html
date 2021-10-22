@@ -1,26 +1,35 @@
 <html> 
 
-<head>
-  <style>
-    body {
-      padding: 50px;
-    }
-    section{
-      display:block !important;
-    }
-    .slider{
-      width: 50% !important;
-    }
-  </style>
+<style>
+  body {
+    padding: 50px;
+  }
+  section{
+    display:block !important;
+  }
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js" integrity="sha512-f0VlzJbcEB6KiW8ZVtL+5HWPDyW1+nJEjguZ5IVnSQkvZbwBt2RfCBY0CBO1PsMAqxxrG4Di6TfsCPP3ZRwKpA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://d3js.org/d3.v7.min.js"></script> 
-</head>
+  .checkbox {
+    float: left !important;
+    width: 100px !important;
+  }
+  input {
+    text-decoration: none !important;
+  }
+  .slider{
+    width: 50% !important;
+  }
+  #scoreFilters{
+    padding-top: 30px;
+  }
+</style>
 
-<body>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://d3js.org/d3.v7.min.js"></script> 
+< /head> 
+  <body> 
 <h1>South Bay Restaurant Inspection Score Finder</h1>
-<h4>Dilan Nana, Dana Chiueh </h4>
+<p> Dilan Nana, Dana Chiueh </p>
 <p>Explore the restaurant inspection scores of all South Bay restaurants!
   Filter by zipcode, city or grade, and explore the interactive map by hovering to learn
 about individual restaurants. Drag the circles around or adjust their radii with the sliders below. </p>
@@ -28,9 +37,20 @@ about individual restaurants. Drag the circles around or adjust their radii with
 <div id="zipcodes"><h4>Zipcode</h4></div>
 <div id="cities"><h4>City</h4></div>
 <div id="grades"><h4>Grade</h4></div>
-
-
+  
+<section>
+<div id="checkboxFilters">Filter by Zipcode</div>
+</section>
+<section>
+<div id="scoreFilters">
+    Score range: <input type="range" value="50%" min="1" max="100" class="slider" id="ScoreRange">
+</div>
+</section>
+<section>
+<p> Adjust the radii of the circles below by sliding here: </p>
+</section>
 <script> 
+
 
 //Read the data
 d3.csv("data.csv").then( function(data) {
@@ -43,20 +63,22 @@ var mapHeight = 750;
 var clickCount = 0; 
 
   // function for adjusting the radii 
-  let slider1 = d3.select("#circleRadii").append("input");
-  let slider2 = d3.select("#circleRadii").append("input");
+  let slider1 = d3.select('body').append("input");
+  let slider2 = d3.select('body').append("input");
   slider1
   .attr("type", "range")
   .attr("class", "slider")
   .attr("min", 1)
-  .attr("max", 100)
+  .attr("max", 50)
+  //.attr("value", 25)
   .attr("id", "adjustRadii1"); 
 
   slider2
   .attr("type", "range")
   .attr("class", "slider")
   .attr("min", 1)
-  .attr("max", 100)
+  .attr("max", 50)
+  //.attr("value", 25)
   .attr("id", "adjustRadii2"); 
 
   slider1.on("input", (d) => {
@@ -173,7 +195,7 @@ let drag = d3.drag()
        let highlight2 = isWithinRadius(x2,mainCircle2_CX,  y2,mainCircle2_CY, r2);
 
        if(highlight1 && highlight2){
-          circle.style("fill", "red");
+          circle.style("fill", "yellow");
        }else{
          circle.style("fill", "rgba(0,0,0,0.8)");
        }
@@ -191,19 +213,25 @@ function isWithinRadius(x1, x2, y1, y2, r){
   let dist = Math.sqrt(Math.pow((x2 - x1),2) + Math.pow((y2 - y1),2));
   return 0 <= dist && dist <= r;
 }
+// Processing filters
+d3.selectAll('#ScoreRange')
+.on("change", function() {
+  let score = this.value;
+  console.log(score);
+});
 
 // Find unique zipcodes using the slice javascript method to parse the "Adress" data for zip codes
-var zipcodes = d3.group(data, d => d.Adress.split(",")[2].slice(4).substring(0,5)); 
-var cities = d3.group(data, d => d.Adress.split(",")[1].toUpperCase());
-var grades = d3.group(data, d => d.Grade);
+var zipData = d3.group(data, d => d.Adress.slice(d.Adress.length - 5)); 
+//console.log(zipData)
 
-function createCheckboxes(boxData, id){
-  var checkBoxes = d3.select(id)
+// Use the unique zipcodes to instantiate checkboxes
+/*var checkBoxes = d3.select("#checkboxFilters")
     .selectAll("div")
-    .data(boxData)
+    .data(zipData)
     .enter()
     .append("div")
-    .attr("class", "checkbox-inline");
+    .attr("class", "checkbox");
+
   checkBoxes.append("input")
     .attr("type", "checkbox")
     .attr("id", d => d[0])
@@ -211,11 +239,10 @@ function createCheckboxes(boxData, id){
   checkBoxes.append("label")
     .attr('for', d => d[0])
     .text(d => d[0]);
-}
-
-createCheckboxes(zipcodes, "#zipcodes");
-createCheckboxes(cities, "#cities");
-createCheckboxes(grades, "#grades");
+    
+});*/ 
+  
+  
 
 /*
 FILTERS:
@@ -234,9 +261,33 @@ function fitsFilters(circle){
 }
 */
 
-});
 
+  // Find unique zipcodes using the slice javascript method to parse the "Adress" data for zip codes
+var zipcodes = d3.group(data, d => d.Adress.split(",")[2].slice(4).substring(0,5)); 
+var cities = d3.group(data, d => d.Adress.split(",")[1].toUpperCase());
+var grades = d3.group(data, d => d.Grade);
+
+  function createCheckboxes(boxData, id){
+    var checkBoxes = d3.select(id)
+      .selectAll("div")
+      .data(boxData)
+      .enter()
+      .append("div")
+      .attr("class", "checkbox-inline");
+    checkBoxes.append("input")
+      .attr("type", "checkbox")
+      .attr("id", d => d[0])
+      .attr("value", d => d[0]);
+    checkBoxes.append("label")
+      .attr('for', d => d[0])
+      .text(d => d[0]);
+  }
+
+createCheckboxes(zipcodes, "#zipcodes");
+createCheckboxes(cities, "#cities");
+createCheckboxes(grades, "#grades");
+  
 
 </script> 
-</body>
+  </body> 
 </html>
