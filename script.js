@@ -55,6 +55,7 @@
         svg.append('image')
           .attr('width', mapWidth)
           .attr('height', mapHeight)
+          .attr("z-index", -1)
           .attr('xlink:href', './map.svg');
         
         // Set up projection that the map is using
@@ -63,6 +64,47 @@
           .center([-122.061578, 37.385532]) 
           .scale(scale)
           .translate([mapWidth / 2, mapHeight / 2]);
+
+        //tooltip creation
+        var Tooltip = svg
+        .append("text")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .attr("fill", "red")
+        
+        //.style("background-color", "red")
+        .style("border", "solid")
+        .style("z-index", 30)
+        .text("text", "HELLO")
+        .style("border-width", "2px")
+        .style("border-radius", "5px"); 
+        //.style("padding", "5px");
+
+        var mouseover = function(d) {
+            console.log("MOUSE OVER"); 
+            Tooltip
+            .style("opacity", 1)
+            d3.select(this)
+            .style("stroke", "black")
+            .style("opacity", 1)
+        }
+        var mousemove = function(e, i ) {
+          var id = d3.select(this).attr("id"); 
+          var index = parseInt(id.split('_')[2]);
+          console.log(data[index]); 
+            Tooltip
+            .text("The exact value of<br>this cell is: "+ id )
+            .attr("x", (event.x - 30 ))
+            .attr("y", event.y + 10     )
+        }
+        var mouseleave = function(d) {
+            console.log("MOUSE LeAVE"); 
+            Tooltip
+            .style("opacity", 0)
+            d3.select(this)
+            .style("stroke", "none")
+            .style("opacity", 0.8)
+        }
     
         // console.log(data); 
         var pnt = 0; 
@@ -82,7 +124,11 @@
                 // console.log("You selected this circle " , d3.select(d.currentTarget).attr("id")); 
                 // console.log(clickCount); 
                 clickCount++;
-            });
+            })
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave); 
+
             pnt++; 
             
         });
