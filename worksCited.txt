@@ -1,0 +1,2 @@
+https://observablehq.com/@d3/circle-dragging-i
+https://stackoverflow.com/questions/52598074/d3-checkbox-label-input-order
