@@ -159,34 +159,8 @@
             .style('fill', item.color)
             .call(drag); 
     
-    
           index++;
         });
-    
-        // zipcode filter. everytime a box is checked or unchecked, its value 
-        // is added to or removed from map. 
-        d3.selectAll('#ScoreRange')
-        .on("change", function() {
-          let score = this.value;
-          console.log(score);
-        });
-
-        function checkFilters(location) {
-          // first check if any filters have been selected
-          // then check if this location fits
-          
-          data[location]
-
-          if (zipOn()) {
-
-          }
-          if (citiesOn()) {
-
-          }
-          if (gradeOn()) {
-
-          }
-        }
 
         function dragstarted(event, d) {
             d3.select(this).raise().attr("stroke", "black");
@@ -215,8 +189,10 @@
               let highlight1 = isWithinRadius(x2,mainCircle1_CX,  y2,mainCircle1_CY, r1);
               let highlight2 = isWithinRadius(x2,mainCircle2_CX,  y2,mainCircle2_CY, r2);
     
-              if(highlight1 && highlight2 && checkFilters(i)){
-                  circle.style("fill", "red");
+              if(highlight1 && highlight2){
+                  circle.style("fill", "blue")
+                  .filter(checkFilters(i))
+                  .style("fill", "red");
               }else{
                 circle.style("fill", "rgba(0,0,0,0.8)");
               }
@@ -234,33 +210,13 @@
           let dist = Math.sqrt(Math.pow((x2 - x1),2) + Math.pow((y2 - y1),2));
           return 0 <= dist && dist <= r;
         }
-
-        /*
-        FILTERS:
-        - when a filter is activated, that becomes a requirement
-        - have a function that checks against every single filter and returns yes or no
     
-    
-        d3.selectAll(".checkbox")
-        .on("change", function() {
-          let score = this.id;
-          console.log(score);
-        });
-    
-        function fitsFilters(circle){
-          
-        }
-        */
-    
-    
-          // Find unique zipcodes using the slice javascript method to parse the "Adress" data for zip codes
+        // Parse Adress column for zipcodes and cities, then group by unique ones
         var zipcodes = d3.group(data, d => d.Adress.split(",")[2].slice(4).substring(0,5)); 
         var cities = d3.group(data, d => d.Adress.split(",")[1].toUpperCase());
         var grades = d3.group(data, d => d.Grade);
 
-
-
-        function filterData(data){
+        /*function filterData(data){
           var filteredData = [];
           d3.selectAll(".chx").each(function(d, i) {
             d3.select(this).property("checked") == true ? filteredData.push(this.value) : null;
@@ -270,28 +226,87 @@
           d3.selectAll(".dotty").filter(function(d){
             console.log(d);
           })
+        }*/
 
+        var filteredzipcodes = new Set();
+        var filteredcities = new Set();
+        var filteredgrades = new Set();
+
+        function checkFilters(i){
+          if (filteredzipcodes.size > 0) {
+            if (!filteredzipcodes.has(data[i].Adress.split(",")[2].slice(4).substring(0,5))) {
+              return false;
+            }
+          }
+          if (filteredcities.size > 0) {
+            if (!filteredcities.has(data[i].Adress.split(",")[1].toUpperCase())) {
+              return false;
+            }
+          }
+          if (filteredgrades.size > 0) {
+            if (!filteredgrades.has(data[i].Grade)) {
+              return false;
+            }
+          }
+          return true;
         }
-    
+
+        var filteredzipcodes = new Set();
+        var filteredcities = new Set();
+        var filteredgrades = new Set();
+
+        // Everytime a checkbox is changed, its value is added to or removed from set.
+        // Called whenever checkbox is clicked through "onclick" attribute
+        /*function changeFilter(type, value) {
+          (this.checked) ? `filtered${type}`.add(value) : `filtered${type}`.delete(value);
+          console.log("Filter changed");
+        }*/
+
+        function changeZ(type, value) {
+          (this.checked) ? filteredzipcodes.add(value) : filteredzipcodes.delete(value);
+          console.log("Z changed");
+        }
+
+        function changeC(type, value) {
+          (this.checked) ? filteredcities.add(value) : filteredcities.delete(value);
+          console.log("C changed");
+        }
+
+        function changeG(type, value) {
+          (this.checked) ? filteredgrades.add(value) : filteredgrades.delete(value);
+          console.log("G changed");
+        }
+
     
         function createCheckboxes(boxData, id){
-        var checkBoxes = d3.select(id)
+          var checkBoxes = d3.select("#" + id)
             .selectAll("div")
             .data(boxData)
             .enter()
             .append("div")
             .attr("class", "checkbox-inline");
-        checkBoxes.append("input")
+          checkBoxes.append("input")
             .attr("type", "checkbox")
-            .attr("id", d => d[0])
-            .attr("value", d => d[0]);
-        checkBoxes.append("label")
-            .attr('for', d => d[0])
-            .text(d => d[0]);
+            .attr("class", id)
+            .attr("value", d => d)
+            .attr("id", d => d);
+            //.attr("onclick", `changeFilter("${id}", "${d => d}")`);
+          checkBoxes.append("label")
+            .attr('for', d => d)
+            .text(d => d);
+          
+          let z = d3.selectAll(".zipcodes")
+            .attr("onclick", `changeZ("zipcodes", ${d => d})`);
+
+          let c = d3.selectAll(".cities")
+            .attr("onclick", `changeC("cities", ${d => d})`);
+
+          let g = d3.selectAll(".grades")
+            .attr("onclick", `changeG("grades", ${d => d})`);
         }
             
-        createCheckboxes(zipcodes, "#zipcodes");
-        createCheckboxes(cities, "#cities");
-        createCheckboxes(grades, "#grades");
+        createCheckboxes(Array.from(zipcodes.keys()).sort(), "zipcodes");
+        createCheckboxes(Array.from(cities.keys()), "cities");
+        createCheckboxes(Array.from(grades.keys()), "grades");
 
     }); 
