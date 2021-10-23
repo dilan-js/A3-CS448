@@ -1,5 +1,3 @@
-
-
     //Read the data
     d3.csv("data.csv").then( function(data) {
         var circleOne = null;
@@ -11,22 +9,20 @@
         var clickCount = 0; 
     
           // function for adjusting the radii 
-          let slider1 = d3.select('body').append("input");
-          let slider2 = d3.select('body').append("input");
+          let slider1 = d3.select('#circleRadii').append("input");
+          let slider2 = d3.select('#circleRadii').append("input");
           slider1
           .attr("type", "range")
           .attr("class", "slider")
           .attr("min", 1)
-          .attr("max", 50)
-          //.attr("value", 25)
+          .attr("max", 100)
           .attr("id", "adjustRadii1"); 
     
           slider2
           .attr("type", "range")
           .attr("class", "slider")
           .attr("min", 1)
-          .attr("max", 50)
-          //.attr("value", 25)
+          .attr("max", 100)
           .attr("id", "adjustRadii2"); 
     
           slider1.on("input", (d) => {
@@ -71,14 +67,16 @@
         .style("opacity", 0)
         .attr("class", "tooltip")
         .attr("fill", "red")
-        
-        //.style("background-color", "red")
+        .attr("background", "white");
+        /*
+        .style("background-color", "red")
         .style("border", "solid")
-        .style("z-index", 30)
+        //.style("z-index", 30)
         .text("text", "HELLO")
         .style("border-width", "2px")
         .style("border-radius", "5px"); 
         //.style("padding", "5px");
+        */
 
         var mouseover = function(d) {
             console.log("MOUSE OVER"); 
@@ -93,8 +91,8 @@
           var index = parseInt(id.split('_')[2]);
           console.log(data[index]); 
             Tooltip
-            .text("The exact value of<br>this cell is: "+ id )
-            .attr("x", (event.x - 30 ))
+            .text(data[index].Name + " Score: " + data[index].Score)
+            .attr("x", (event.x - 20 ))
             .attr("y", event.y + 10     )
         }
         var mouseleave = function(d) {
@@ -161,6 +159,31 @@
           index++;
         });
     
+        // zipcode filter. everytime a box is checked or unchecked, its value 
+        // is added to or removed from map. 
+        d3.selectAll('#ScoreRange')
+        .on("change", function() {
+          let score = this.value;
+          console.log(score);
+        });
+
+        function checkFilters(location) {
+          // first check if any filters have been selected
+          // then check if this location fits
+          
+          data[location]
+
+          if (zipOn()) {
+
+          }
+          if (citiesOn()) {
+
+          }
+          if (gradeOn()) {
+
+          }
+        }
+
         function dragstarted(event, d) {
             d3.select(this).raise().attr("stroke", "black");
           }
@@ -188,8 +211,8 @@
               let highlight1 = isWithinRadius(x2,mainCircle1_CX,  y2,mainCircle1_CY, r1);
               let highlight2 = isWithinRadius(x2,mainCircle2_CX,  y2,mainCircle2_CY, r2);
     
-              if(highlight1 && highlight2){
-                  circle.style("fill", "yellow");
+              if(highlight1 && highlight2 && checkFilters(i)){
+                  circle.style("fill", "red");
               }else{
                 circle.style("fill", "rgba(0,0,0,0.8)");
               }
@@ -207,37 +230,7 @@
           let dist = Math.sqrt(Math.pow((x2 - x1),2) + Math.pow((y2 - y1),2));
           return 0 <= dist && dist <= r;
         }
-        // Processing filters
-        d3.selectAll('#ScoreRange')
-        .on("change", function() {
-          let score = this.value;
-          console.log(score);
-        });
-    
-        // Find unique zipcodes using the slice javascript method to parse the "Adress" data for zip codes
-        var zipData = d3.group(data, d => d.Adress.slice(d.Adress.length - 5)); 
-        //console.log(zipData)
-    
-        // Use the unique zipcodes to instantiate checkboxes
-        /*var checkBoxes = d3.select("#checkboxFilters")
-            .selectAll("div")
-            .data(zipData)
-            .enter()
-            .append("div")
-            .attr("class", "checkbox");
-    
-          checkBoxes.append("input")
-            .attr("type", "checkbox")
-            .attr("id", d => d[0])
-            .attr("value", d => d[0]);
-          checkBoxes.append("label")
-            .attr('for', d => d[0])
-            .text(d => d[0]);
-            
-        });*/ 
-          
-          
-    
+
         /*
         FILTERS:
         - when a filter is activated, that becomes a requirement
@@ -261,24 +254,24 @@
         var cities = d3.group(data, d => d.Adress.split(",")[1].toUpperCase());
         var grades = d3.group(data, d => d.Grade);
     
-function createCheckboxes(boxData, id){
-var checkBoxes = d3.select(id)
-    .selectAll("div")
-    .data(boxData)
-    .enter()
-    .append("div")
-    .attr("class", "checkbox-inline");
-checkBoxes.append("input")
-    .attr("type", "checkbox")
-    .attr("id", d => d[0])
-    .attr("value", d => d[0]);
-checkBoxes.append("label")
-    .attr('for', d => d[0])
-    .text(d => d[0]);
-}
-    
-createCheckboxes(zipcodes, "#zipcodes");
-createCheckboxes(cities, "#cities");
-createCheckboxes(grades, "#grades");
+        function createCheckboxes(boxData, id){
+        var checkBoxes = d3.select(id)
+            .selectAll("div")
+            .data(boxData)
+            .enter()
+            .append("div")
+            .attr("class", "checkbox-inline");
+        checkBoxes.append("input")
+            .attr("type", "checkbox")
+            .attr("id", d => d[0])
+            .attr("value", d => d[0]);
+        checkBoxes.append("label")
+            .attr('for', d => d[0])
+            .text(d => d[0]);
+        }
+            
+        createCheckboxes(zipcodes, "#zipcodes");
+        createCheckboxes(cities, "#cities");
+        createCheckboxes(grades, "#grades");
 
     }); 
