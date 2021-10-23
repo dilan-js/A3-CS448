@@ -1,6 +1,8 @@
 
 
     //Read the data
+    //Clean the code up. 
+
     d3.csv("data.csv").then( function(data) {
         var circleOne = null;
         var circleTwo = null;
@@ -108,10 +110,12 @@
     
         // console.log(data); 
         var pnt = 0; 
+        // svg.data(data).append(circle).ente
         data.forEach(item => {
             var projectedLocation = projection([parseFloat(item.Longitude), parseFloat(item.Latitude)]);
             var circle = svg.append('circle')
             .attr("id", "data_circle_" +pnt)
+            .attr("class", "dotty")
             .attr('cx', projectedLocation[0])
             .attr('cy', projectedLocation[1])
             .attr('r', 2.3)
@@ -260,7 +264,11 @@
         var zipcodes = d3.group(data, d => d.Adress.split(",")[2].slice(4).substring(0,5)); 
         var cities = d3.group(data, d => d.Adress.split(",")[1].toUpperCase());
         var grades = d3.group(data, d => d.Grade);
-    
+
+
+        
+
+
 function createCheckboxes(boxData, id){
 var checkBoxes = d3.select(id)
     .selectAll("div")
@@ -271,14 +279,31 @@ var checkBoxes = d3.select(id)
 checkBoxes.append("input")
     .attr("type", "checkbox")
     .attr("id", d => d[0])
+    .attr("class", "chx") 
     .attr("value", d => d[0]);
 checkBoxes.append("label")
     .attr('for', d => d[0])
     .text(d => d[0]);
+  }
+    
+  createCheckboxes(zipcodes, "#zipcodes");
+  createCheckboxes(cities, "#cities");
+  createCheckboxes(grades, "#grades");
+	d3.select("#zipcodes").on("change",filterData);
+  
+}); 
+
+
+function filterData(data){
+  var filteredData = [];
+  d3.selectAll(".chx").each(function(d, i) {
+    d3.select(this).property("checked") == true ? filteredData.push(this.value) : null;
+    console.log(filteredData.length);
+  });
+  console.log("Before:");
+  d3.selectAll(".dotty").filter(function(d){
+    console.log(d);
+  })
+	
 }
     
-createCheckboxes(zipcodes, "#zipcodes");
-createCheckboxes(cities, "#cities");
-createCheckboxes(grades, "#grades");
-
-    }); 
