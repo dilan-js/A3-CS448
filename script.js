@@ -2,6 +2,9 @@
     //Clean the code up. 
 
     d3.csv("data.csv").then( function(data) {
+        var filteredzipcodes = [];
+        var filteredcities = [];
+        var filteredgrades = [];
         var circleOne = null;
         var circleTwo = null;
           // Set up size
@@ -70,15 +73,6 @@
         .attr("class", "tooltip")
         .attr("fill", "red")
         .attr("background", "white");
-        /*
-        .style("background-color", "red")
-        .style("border", "solid")
-        //.style("z-index", 30)
-        .text("text", "HELLO")
-        .style("border-width", "2px")
-        .style("border-radius", "5px"); 
-        //.style("padding", "5px");
-        */
 
         var mouseover = function(d) {
             console.log("MOUSE OVER"); 
@@ -185,21 +179,19 @@
               let x2 = parseFloat(circle.attr("cx")); 
               let y2 = parseFloat(circle.attr("cy")); 
               
-    
               let highlight1 = isWithinRadius(x2,mainCircle1_CX,  y2,mainCircle1_CY, r1);
               let highlight2 = isWithinRadius(x2,mainCircle2_CX,  y2,mainCircle2_CY, r2);
     
+              circle.style("fill", "rgba(0,0,0,0.8)");
               if(highlight1 && highlight2){
-                  circle.style("fill", "blue")
-                  .filter(checkFilters(i))
+                  //circle.style("fill", "blue"); // test intersection
+                  circle.filter(function() { return checkFilters(i)})
                   .style("fill", "red");
-              }else{
-                circle.style("fill", "rgba(0,0,0,0.8)");
-              }
             }
             let end = Date.now(); 
             console.log("EVENT TOOK MILLISECONDS ", (end-start)); 
           }
+        }
     
           function dragended(event, d) {
             d3.select(this).attr("stroke", null);
@@ -216,68 +208,28 @@
         var cities = d3.group(data, d => d.Adress.split(",")[1].toUpperCase());
         var grades = d3.group(data, d => d.Grade);
 
-        /*function filterData(data){
-          var filteredData = [];
-          d3.selectAll(".chx").each(function(d, i) {
-            d3.select(this).property("checked") == true ? filteredData.push(this.value) : null;
-            console.log(filteredData.length);
-          });
-          console.log("Before:");
-          d3.selectAll(".dotty").filter(function(d){
-            console.log(d);
-          })
-        }*/
-
-        var filteredzipcodes = new Set();
-        var filteredcities = new Set();
-        var filteredgrades = new Set();
-
         function checkFilters(i){
-          if (filteredzipcodes.size > 0) {
-            if (!filteredzipcodes.has(data[i].Adress.split(",")[2].slice(4).substring(0,5))) {
+          console.log(filteredzipcodes);
+          if (filteredzipcodes.length > 0) {
+            if (!filteredzipcodes.includes(data[i].Adress.split(",")[2].slice(4).substring(0,5))) {
               return false;
             }
           }
-          if (filteredcities.size > 0) {
-            if (!filteredcities.has(data[i].Adress.split(",")[1].toUpperCase())) {
+          console.log(filteredcities);
+          if (filteredcities.length > 0) {
+            if (!filteredcities.includes(data[i].Adress.split(",")[1].toUpperCase())) {
               return false;
             }
           }
-          if (filteredgrades.size > 0) {
-            if (!filteredgrades.has(data[i].Grade)) {
+          console.log(filteredgrades);
+          if (filteredgrades.length > 0) {
+            if (!filteredgrades.includes(data[i].Grade)) {
               return false;
             }
           }
           return true;
         }
 
-        var filteredzipcodes = new Set();
-        var filteredcities = new Set();
-        var filteredgrades = new Set();
-
-        // Everytime a checkbox is changed, its value is added to or removed from set.
-        // Called whenever checkbox is clicked through "onclick" attribute
-        /*function changeFilter(type, value) {
-          (this.checked) ? `filtered${type}`.add(value) : `filtered${type}`.delete(value);
-          console.log("Filter changed");
-        }*/
-
-        function changeZ(type, value) {
-          (this.checked) ? filteredzipcodes.add(value) : filteredzipcodes.delete(value);
-          console.log("Z changed");
-        }
-
-        function changeC(type, value) {
-          (this.checked) ? filteredcities.add(value) : filteredcities.delete(value);
-          console.log("C changed");
-        }
-
-        function changeG(type, value) {
-          (this.checked) ? filteredgrades.add(value) : filteredgrades.delete(value);
-          console.log("G changed");
-        }
-
-    
         function createCheckboxes(boxData, id){
           var checkBoxes = d3.select("#" + id)
             .selectAll("div")
@@ -290,23 +242,47 @@
             .attr("class", id)
             .attr("value", d => d)
             .attr("id", d => d);
-            //.attr("onclick", `changeFilter("${id}", "${d => d}")`);
           checkBoxes.append("label")
             .attr('for', d => d)
             .text(d => d);
-          
-          let z = d3.selectAll(".zipcodes")
-            .attr("onclick", `changeZ("zipcodes", ${d => d})`);
 
-          let c = d3.selectAll(".cities")
-            .attr("onclick", `changeC("cities", ${d => d})`);
-
-          let g = d3.selectAll(".grades")
-            .attr("onclick", `changeG("grades", ${d => d})`);
+          var cboxes = document.querySelectorAll("." + id);
+          if (id == "zipcodes") {
+            // Use Array.forEach to add an event listener to each checkbox.
+            cboxes.forEach(function(checkbox) {
+              checkbox.addEventListener('change', function() {
+                filteredzipcodes = 
+                  Array.from(cboxes) // Convert checkboxes to an array to use filter and map.
+                  .filter(i => i.checked) // Use Array.filter to remove unchecked checkboxes.
+                  .map(i => i.value); // Use Array.map to extract only the checkbox values from the array of objects.
+                  
+              })
+            });
+          } else if (id == "cities") {
+            cboxes.forEach(function(checkbox) {
+              checkbox.addEventListener('change', function() {
+                filteredcities = 
+                  Array.from(cboxes) // Convert checkboxes to an array to use filter and map.
+                  .filter(i => i.checked) // Use Array.filter to remove unchecked checkboxes.
+                  .map(i => i.value); // Use Array.map to extract only the checkbox values from the array of objects.
+                  
+              })
+            });
+          } else if (id == "grades") {
+            cboxes.forEach(function(checkbox) {
+              checkbox.addEventListener('change', function() {
+                filteredgrades = 
+                  Array.from(cboxes) // Convert checkboxes to an array to use filter and map.
+                  .filter(i => i.checked) // Use Array.filter to remove unchecked checkboxes.
+                  .map(i => i.value); // Use Array.map to extract only the checkbox values from the array of objects.
+                  
+              })
+            });
+          }
         }
             
         createCheckboxes(Array.from(zipcodes.keys()).sort(), "zipcodes");
         createCheckboxes(Array.from(cities.keys()), "cities");
-        createCheckboxes(Array.from(grades.keys()), "grades");
+        createCheckboxes(Array.from(grades.keys()), "grades");   
 
-    }); 
+}); 
