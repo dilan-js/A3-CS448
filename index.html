@@ -15,11 +15,40 @@
   input {
     text-decoration: none !important;
   }
-  .slider{
-    width: 50% !important;
-  }
+ 
   #scoreFilters{
     padding-top: 30px;
+  }
+  #circleRadii{
+    
+  }
+  .flexDiv{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    max-width: 600px;
+ 
+  }
+  #leftLabel1{
+    display: flex;
+    width: 60px;
+    padding-left: 20px;
+    padding-right: 10px;
+  }
+  #rightLabel1{
+    width: 100px;
+    padding-right: 20px;
+    padding-left: 10px;
+  }
+  .slider{
+    width: 300px;
+  }
+  #slider1{
+    width: 80%;
+  }
+  #slider2{
+    width: 80%;
   }
 </style>
 
@@ -34,7 +63,21 @@
   <p>Explore the restaurant inspection scores of all South Bay restaurants!
     Filter by zipcode, city or grade, and explore the interactive map by hovering to learn
   about individual restaurants. Drag the circles around or adjust their radii with the sliders below. </p>
-  <div id="circleRadii"></div>
+  <div id="circleRadii">
+    <div>Green Circle</div>
+    <div class="flexDiv">
+      <div id="leftLabel1">0 mi</div>
+      <div id="slider1"></div>
+      <div id="rightLabel1">20 mi</div>
+    </div>
+    <div>Red Circle</div>
+    <div class="flexDiv">
+      <div id="leftLabel1">0 mi</div>
+      <div id="slider2"></div>
+      <div id="rightLabel1">20 mi</div>
+    </div>
+   
+  </div>
   <div id="zipcodes"><h4>Zipcode</h4></div>
   <div id="cities"><h4>City</h4></div>
   <div id="grades"><h4>Grade</h4></div>

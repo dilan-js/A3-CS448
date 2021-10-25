@@ -10,36 +10,35 @@
           // Set up size
         var mapWidth = 1000;
         var mapHeight = 750;
-    
         var clickCount = 0; 
     
           // function for adjusting the radii 
-          let slider1 = d3.select('#circleRadii').append("input");
-          let slider2 = d3.select('#circleRadii').append("input");
+          let slider1 = d3.select('#slider1').append("input");
+          let slider2 = d3.select('#slider2').append("input");
           slider1
           .attr("type", "range")
           .attr("class", "slider")
           .attr("min", 1)
-          .attr("max", 100)
+          .attr("max", 20)
           .attr("id", "adjustRadii1"); 
     
           slider2
           .attr("type", "range")
           .attr("class", "slider")
           .attr("min", 1)
-          .attr("max", 100)
+          .attr("max", 20)
           .attr("id", "adjustRadii2"); 
     
           slider1.on("input", (d) => {
               let radius = d3.select("#adjustRadii1").property("value");   
             // console.log(radius); 
-              d3.select('#main_circle_1').attr("r", radius); 
+              d3.select('#main_circle_1').attr("r", radius*60); 
           });
     
           slider2.on("input", (d) => {
               let radius = d3.select("#adjustRadii2").property("value"); 
             // console.log(radius); 
-              d3.select('#main_circle_2').attr("r", radius); 
+              d3.select('#main_circle_2').attr("r", radius*60); 
           });
     
         // This is the mapping between <longitude, latitude> position to <x, y> pixel position on the map
@@ -82,7 +81,6 @@
         .style("opacity", 0);
 
         var mouseover = function(d) {
-            console.log("MOUSE OVER"); 
             div
             .style("opacity", 1)
             d3.select(this)
@@ -104,7 +102,6 @@
            
         }
         var mouseleave = function(d) {
-            console.log("MOUSE LeAVE"); 
             div
             .style("opacity", 0)
             d3.select(this)
@@ -118,7 +115,6 @@
           {"id": 1, "Longitude": "-122.168646", "Latitude": "37.423023", color: "rgba(0, 255, 0, 0.4)"},
           {"id": 2, "Longitude": "-122.166963", "Latitude": "37.427495", color: "rgba(255,0,0, 0.4)"}
         ];
-        // console.log({data2});
         var index = 0;
         data2.forEach(item => { 
               
@@ -135,7 +131,7 @@
             .attr('cx', projectedLocation[0])
             .attr('cy', projectedLocation[1])
             .attr('r', 50)
-            .style("zIndex", -1)
+            .style("z-index", -1)
             .style('fill', item.color)
             .call(drag); 
     
@@ -148,9 +144,11 @@
         // svg.data(data).append(circle).ente
         data.forEach(item => {
             var projectedLocation = projection([parseFloat(item.Longitude), parseFloat(item.Latitude)]);
+            console.log("this is circle: " + item.Name + " " + projectedLocation);
             var circle = svg.append('circle')
             .attr("id", "data_circle_" +pnt)
             .attr("class", "dotty")
+            .style("z-index", 400)
             .attr('cx', projectedLocation[0])
             .attr('cy', projectedLocation[1])
             .attr('r', 2.3)
@@ -181,7 +179,7 @@
           function dragged(event, d) {
             let start = Date.now(); 
             d3.select(this).attr("cx",event.x).attr("cy", event.y);
-            let mainCircle1 = d3.select("#main_circle_1"); 
+            let mainCircle1 = d3.select("#main_circle_1").style("z-index", -1); 
             let mainCircle2 = d3.select("#main_circle_2"); 
     
             let mainCircle1_CX = parseFloat(mainCircle1.attr("cx")); 
@@ -200,7 +198,7 @@
               let highlight1 = isWithinRadius(x2,mainCircle1_CX,  y2,mainCircle1_CY, r1);
               let highlight2 = isWithinRadius(x2,mainCircle2_CX,  y2,mainCircle2_CY, r2);
     
-              circle.style("fill", "rgba(0,0,0,0.8)");
+              circle.style("fill", "rgba(0,0,0,0.8)").style("z-index", 400);
               if(highlight1 && highlight2){
                   //circle.style("fill", "blue"); // test intersection
                   circle.filter(function() { return checkFilters(i)})
