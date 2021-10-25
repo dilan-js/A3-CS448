@@ -19,27 +19,30 @@
           .attr("type", "range")
           .attr("class", "slider")
           .attr("min", 1)
-          .attr("max", 20)
+          .attr("max", 10)
           .attr("id", "adjustRadii1"); 
     
           slider2
           .attr("type", "range")
           .attr("class", "slider")
           .attr("min", 1)
-          .attr("max", 20)
+          .attr("max", 10)
           .attr("id", "adjustRadii2"); 
     
           slider1.on("input", (d) => {
               let radius = d3.select("#adjustRadii1").property("value");   
-            // console.log(radius); 
-              d3.select('#main_circle_1').attr("r", radius*60); 
+            // console.log("THIS ISMILES: " , radius/0.016555289026426286); 
+              d3.select('#main_circle_1').attr("r", radius/0.016555289026426286); 
           });
     
           slider2.on("input", (d) => {
               let radius = d3.select("#adjustRadii2").property("value"); 
             // console.log(radius); 
-              d3.select('#main_circle_2').attr("r", radius*60); 
+              d3.select('#main_circle_2').attr("r", radius/0.016555289026426286); 
+              var circle2 = d3.select
           });
+
+
     
         // This is the mapping between <longitude, latitude> position to <x, y> pixel position on the map
         // projection is a function and it has an inverse:
@@ -125,7 +128,7 @@
     
           var projectedLocation = projection([parseFloat(item.Longitude), parseFloat(item.Latitude)]);
     
-          console.log({projectedLocation});
+          // console.log({projectedLocation});
           var circle = svg.append('circle')
             .attr("id", "main_circle_" + item.id)
             .attr('cx', projectedLocation[0])
@@ -144,7 +147,7 @@
         // svg.data(data).append(circle).ente
         data.forEach(item => {
             var projectedLocation = projection([parseFloat(item.Longitude), parseFloat(item.Latitude)]);
-            console.log("this is circle: " + item.Name + " " + projectedLocation);
+            // console.log("this is circle: " + item.Name + " " + projectedLocation);
             var circle = svg.append('circle')
             .attr("id", "data_circle_" +pnt)
             .attr("class", "dotty")
@@ -177,7 +180,7 @@
           }
     
           function dragged(event, d) {
-            let start = Date.now(); 
+            // let start = Date.now(); 
             d3.select(this).attr("cx",event.x).attr("cy", event.y);
             let mainCircle1 = d3.select("#main_circle_1").style("z-index", -1); 
             let mainCircle2 = d3.select("#main_circle_2"); 
@@ -204,8 +207,8 @@
                   circle.filter(function() { return checkFilters(i)})
                   .style("fill", "red");
             }
-            let end = Date.now(); 
-            console.log("EVENT TOOK MILLISECONDS ", (end-start)); 
+            // let end = Date.now(); 
+            // console.log("EVENT TOOK MILLISECONDS ", (end-start)); 
           }
         }
     
@@ -225,19 +228,16 @@
         var grades = d3.group(data, d => d.Grade);
 
         function checkFilters(i){
-          console.log(filteredzipcodes);
           if (filteredzipcodes.length > 0) {
             if (!filteredzipcodes.includes(data[i].Adress.split(",")[2].slice(4).substring(0,5))) {
               return false;
             }
           }
-          console.log(filteredcities);
           if (filteredcities.length > 0) {
             if (!filteredcities.includes(data[i].Adress.split(",")[1].toUpperCase())) {
               return false;
             }
           }
-          console.log(filteredgrades);
           if (filteredgrades.length > 0) {
             if (!filteredgrades.includes(data[i].Grade)) {
               return false;
