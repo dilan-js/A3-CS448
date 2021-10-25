@@ -67,16 +67,23 @@
           .translate([mapWidth / 2, mapHeight / 2]);
 
         //tooltip creation
-        var Tooltip = svg
-        .append("text")
-        .style("opacity", 0)
-        .attr("class", "tooltip")
-        .attr("fill", "red")
-        .attr("background", "white");
+        // var Tooltip = svg
+        // .append("text")
+        // .style("opacity", 0)
+        // .attr("class", "tooltip")
+        // .attr("fill", "red")
+        // .attr("backgroundColor", "white");
+
+        var div = d3.select("body").append("div")	
+        .attr("class", "tooltip")	
+        .style("position", "absolute")
+        .style("z-index", 1000)	
+        .style("background-color", "white")		
+        .style("opacity", 0);
 
         var mouseover = function(d) {
             console.log("MOUSE OVER"); 
-            Tooltip
+            div
             .style("opacity", 1)
             d3.select(this)
             .style("stroke", "black")
@@ -85,20 +92,56 @@
         var mousemove = function(e, i ) {
           var id = d3.select(this).attr("id"); 
           var index = parseInt(id.split('_')[2]);
-          console.log(data[index]); 
-            Tooltip
-            .text(data[index].Name + " Score: " + data[index].Score)
-            .attr("x", (event.x - 20 ))
-            .attr("y", event.y + 10     )
+            div
+            .html(`<div>${data[index].Name} <br/> Score: ${data[index].Score}</div>`)
+            .style("left", event.pageX+ 10)
+            .style("top", event.pageY - 50 )
+            .style("padding", 5)
+            .style("font-size", 14)
+            .style("font-weight", 700)
+            .style("border", "1px solid black");
+
+           
         }
         var mouseleave = function(d) {
             console.log("MOUSE LeAVE"); 
-            Tooltip
+            div
             .style("opacity", 0)
             d3.select(this)
             .style("stroke", "none")
             .style("opacity", 0.8)
         }
+
+        
+      
+        const data2 = [
+          {"id": 1, "Longitude": "-122.168646", "Latitude": "37.423023", color: "rgba(0, 255, 0, 0.4)"},
+          {"id": 2, "Longitude": "-122.166963", "Latitude": "37.427495", color: "rgba(255,0,0, 0.4)"}
+        ];
+        // console.log({data2});
+        var index = 0;
+        data2.forEach(item => { 
+              
+        let drag = d3.drag()
+                .on('start', dragstarted)
+                .on('drag', dragged)
+                .on('end', dragended);
+    
+          var projectedLocation = projection([parseFloat(item.Longitude), parseFloat(item.Latitude)]);
+    
+          console.log({projectedLocation});
+          var circle = svg.append('circle')
+            .attr("id", "main_circle_" + item.id)
+            .attr('cx', projectedLocation[0])
+            .attr('cy', projectedLocation[1])
+            .attr('r', 50)
+            .style("zIndex", -1)
+            .style('fill', item.color)
+            .call(drag); 
+    
+          index++;
+        });
+        
     
         // console.log(data); 
         var pnt = 0; 
@@ -129,32 +172,7 @@
             
         });
     
-        const data2 = [
-          {"id": 1, "Longitude": "-122.168646", "Latitude": "37.423023", color: "rgba(0, 255, 0, 0.4)"},
-          {"id": 2, "Longitude": "-122.166963", "Latitude": "37.427495", color: "rgba(255,0,0, 0.4)"}
-        ];
-        // console.log({data2});
-        var index = 0;
-        data2.forEach(item => { 
-              
-        let drag = d3.drag()
-                .on('start', dragstarted)
-                .on('drag', dragged)
-                .on('end', dragended);
-    
-          var projectedLocation = projection([parseFloat(item.Longitude), parseFloat(item.Latitude)]);
-    
-          console.log({projectedLocation});
-          var circle = svg.append('circle')
-            .attr("id", "main_circle_" + item.id)
-            .attr('cx', projectedLocation[0])
-            .attr('cy', projectedLocation[1])
-            .attr('r', 50)
-            .style('fill', item.color)
-            .call(drag); 
-    
-          index++;
-        });
+        
 
         function dragstarted(event, d) {
             d3.select(this).raise().attr("stroke", "black");
