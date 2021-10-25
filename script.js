@@ -73,7 +73,7 @@
         .style("z-index", 1000)	
         .style("background-color", "white")		
         .style("opacity", 0);
-
+        
         var mouseover = function(d) {
             div
             .style("opacity", 1)
