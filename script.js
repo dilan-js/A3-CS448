@@ -42,7 +42,6 @@
               var circle2 = d3.select
           });
 
-
     
         // This is the mapping between <longitude, latitude> position to <x, y> pixel position on the map
         // projection is a function and it has an inverse:
@@ -101,8 +100,7 @@
             .style("font-size", 14)
             .style("font-weight", 700)
             .style("border", "1px solid black");
-
-           
+  
         }
         var mouseleave = function(d) {
             div
@@ -112,8 +110,6 @@
             .style("opacity", 0.8)
         }
 
-        
-      
         const data2 = [
           {"id": 1, "Longitude": "-122.168646", "Latitude": "37.423023", color: "rgba(0, 255, 0, 0.4)"},
           {"id": 2, "Longitude": "-122.166963", "Latitude": "37.427495", color: "rgba(255,0,0, 0.4)"}
@@ -145,10 +141,11 @@
         // console.log(data); 
         var pnt = 0; 
         // svg.data(data).append(circle).ente
+        var group = svg.append("g");
         data.forEach(item => {
             var projectedLocation = projection([parseFloat(item.Longitude), parseFloat(item.Latitude)]);
             // console.log("this is circle: " + item.Name + " " + projectedLocation);
-            var circle = svg.append('circle')
+            var circle = group.append('circle')
             .attr("id", "data_circle_" +pnt)
             .attr("class", "dotty")
             .style("z-index", 400)
@@ -214,6 +211,13 @@
     
           function dragended(event, d) {
             d3.select(this).attr("stroke", null);
+            let save = this.parentNode.firstChild;
+            this.parentNode.insertBefore(this,this.parentNode.firstChild);
+            save.parentNode.insertBefore(save,save.parentNode.firstChild);
+            //group.parentNode.appendChild(group);
+            //group.ownerSVGElement.appendChild(group);
+ 
+ 
           }
     
         //distance formula
