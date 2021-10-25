@@ -19,14 +19,14 @@
           .attr("type", "range")
           .attr("class", "slider")
           .attr("min", 1)
-          .attr("max", 10)
+          .attr("max", 5)
           .attr("id", "adjustRadii1"); 
     
           slider2
           .attr("type", "range")
           .attr("class", "slider")
           .attr("min", 1)
-          .attr("max", 10)
+          .attr("max", 5)
           .attr("id", "adjustRadii2"); 
     
           slider1.on("input", (d) => {
@@ -76,6 +76,35 @@
         // .attr("fill", "red")
         // .attr("backgroundColor", "white");
 
+       
+
+        
+        const data2 = [
+          {"id": 1, "Longitude": "-122.168646", "Latitude": "37.423023", color: "rgba(0, 255, 0, 0.4)"},
+          {"id": 2, "Longitude": "-122.166963", "Latitude": "37.427495", color: "rgba(255,0,0, 0.4)"}
+        ];
+        var index = 0;
+        data2.forEach(item => { 
+              
+        let drag = d3.drag()
+                .on('start', dragstarted)
+                .on('drag', dragged)
+                .on('end', dragended);
+    
+          var projectedLocation = projection([parseFloat(item.Longitude), parseFloat(item.Latitude)]);
+    
+          // console.log({projectedLocation});
+          var circle = svg.append('circle')
+            .attr("id", "main_circle_" + item.id)
+            .attr('cx', projectedLocation[0])
+            .attr('cy', projectedLocation[1])
+            .attr('r', 5/0.016555289026426286)
+            .style('fill', item.color)
+            .call(drag); 
+    
+          index++;
+        });
+
         var div = d3.select("body").append("div")	
         .attr("class", "tooltip")	
         .style("position", "absolute")
@@ -112,36 +141,7 @@
             .style("opacity", 0.8)
         }
 
-        
-      
-        const data2 = [
-          {"id": 1, "Longitude": "-122.168646", "Latitude": "37.423023", color: "rgba(0, 255, 0, 0.4)"},
-          {"id": 2, "Longitude": "-122.166963", "Latitude": "37.427495", color: "rgba(255,0,0, 0.4)"}
-        ];
-        var index = 0;
-        data2.forEach(item => { 
-              
-        let drag = d3.drag()
-                .on('start', dragstarted)
-                .on('drag', dragged)
-                .on('end', dragended);
-    
-          var projectedLocation = projection([parseFloat(item.Longitude), parseFloat(item.Latitude)]);
-    
-          // console.log({projectedLocation});
-          var circle = svg.append('circle')
-            .attr("id", "main_circle_" + item.id)
-            .attr('cx', projectedLocation[0])
-            .attr('cy', projectedLocation[1])
-            .attr('r', 50)
-            .style("z-index", -1)
-            .style('fill', item.color)
-            .call(drag); 
-    
-          index++;
-        });
-        
-    
+
         // console.log(data); 
         var pnt = 0; 
         // svg.data(data).append(circle).ente
@@ -151,27 +151,21 @@
             var circle = svg.append('circle')
             .attr("id", "data_circle_" +pnt)
             .attr("class", "dotty")
-            .style("z-index", 400)
             .attr('cx', projectedLocation[0])
             .attr('cy', projectedLocation[1])
             .attr('r', 2.3)
-            .on("click", (d, event) => {
-                if(circleOne == null || clickCount % 2 == 0 ){
-                    circleOne = d3.select(d.currentTarget).attr("id")
-                }else{
-                    circleTwo = d3.select(d.currentTarget).attr("id")
-                }
-                // console.log("You selected this circle " , d3.select(d.currentTarget).attr("id")); 
-                // console.log(clickCount); 
-                clickCount++;
-            })
             .on("mouseover", mouseover)
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave); 
-
             pnt++; 
             
         });
+
+        
+       
+        
+    
+        
     
         
 
@@ -182,7 +176,7 @@
           function dragged(event, d) {
             // let start = Date.now(); 
             d3.select(this).attr("cx",event.x).attr("cy", event.y);
-            let mainCircle1 = d3.select("#main_circle_1").style("z-index", -1); 
+            let mainCircle1 = d3.select("#main_circle_1") 
             let mainCircle2 = d3.select("#main_circle_2"); 
     
             let mainCircle1_CX = parseFloat(mainCircle1.attr("cx")); 
@@ -201,7 +195,7 @@
               let highlight1 = isWithinRadius(x2,mainCircle1_CX,  y2,mainCircle1_CY, r1);
               let highlight2 = isWithinRadius(x2,mainCircle2_CX,  y2,mainCircle2_CY, r2);
     
-              circle.style("fill", "rgba(0,0,0,0.8)").style("z-index", 400);
+              circle.style("fill", "rgba(0,0,0,0.8)")
               if(highlight1 && highlight2){
                   //circle.style("fill", "blue"); // test intersection
                   circle.filter(function() { return checkFilters(i)})
@@ -213,7 +207,8 @@
         }
     
           function dragended(event, d) {
-            d3.select(this).attr("stroke", null);
+            d3.select(this).attr("stroke", null).style("z-index", -12);
+            
           }
     
         //distance formula
