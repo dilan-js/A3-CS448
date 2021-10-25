@@ -3,3 +3,12 @@ https://stackoverflow.com/questions/52598074/d3-checkbox-label-input-order
 https://stackoverflow.com/questions/14544104/checkbox-check-event-listener
 https://bl.ocks.org/d3noob/a22c42db65eb00d4e369
 https://stackoverflow.com/questions/6566406/svg-re-ordering-z-index-raphael-optional
+https://bl.ocks.org/anonymous/e882a9cc3af83cc537e685ebccca0535
+https://stackoverflow.com/questions/51200038/hard-filtering-of-nodes-in-a-d3-js-force-directed-graph
+https://stackoverflow.com/questions/13595175/updating-svg-element-z-index-with-d3
+https://stackoverflow.com/questions/28163639/how-to-catch-the-mouse-events-in-multiple-layers
+https://stackoverflow.com/questions/27027872/d3-prevent-parent-g-element-from-firing-click-event
+https://stackoverflow.com/questions/25393163/d3-js-how-to-calculate-accurately-the-mercator-transformation-ratio-r
+https://stackoverflow.com/questions/31573480/scale-a-circles-radius-given-in-meters-to-d3-js-d3-geo-mercator-map
+https://stackoverflow.com/questions/32194987/hover-over-an-element-underneath-another-element
+https://stackoverflow.com/questions/7019101/convert-pixel-location-to-latitude-longitude-vise-versa
