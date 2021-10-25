@@ -19,14 +19,14 @@
           .attr("type", "range")
           .attr("class", "slider")
           .attr("min", 1)
-          .attr("max", 10)
+          .attr("max", 5)
           .attr("id", "adjustRadii1"); 
     
           slider2
           .attr("type", "range")
           .attr("class", "slider")
           .attr("min", 1)
-          .attr("max", 10)
+          .attr("max", 5)
           .attr("id", "adjustRadii2"); 
     
           slider1.on("input", (d) => {
@@ -111,7 +111,7 @@
         }
 
         const data2 = [
-          {"id": 1, "Longitude": "-122.168646", "Latitude": "37.423023", color: "rgba(0, 255, 0, 0.4)"},
+          {"id": 1, "Longitude": "-122.02975", "Latitude": "37.37678", color: "rgba(0, 255, 0, 0.4)"},
           {"id": 2, "Longitude": "-122.166963", "Latitude": "37.427495", color: "rgba(255,0,0, 0.4)"}
         ];
         var index = 0;
@@ -129,7 +129,7 @@
             .attr("id", "main_circle_" + item.id)
             .attr('cx', projectedLocation[0])
             .attr('cy', projectedLocation[1])
-            .attr('r', 50)
+            .attr('r', 5/0.016555289026426286)
             .style("z-index", -1)
             .style('fill', item.color)
             .call(drag); 
@@ -214,10 +214,6 @@
             let save = this.parentNode.firstChild;
             this.parentNode.insertBefore(this,this.parentNode.firstChild);
             save.parentNode.insertBefore(save,save.parentNode.firstChild);
-            //group.parentNode.appendChild(group);
-            //group.ownerSVGElement.appendChild(group);
- 
- 
           }
     
         //distance formula
