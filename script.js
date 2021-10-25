@@ -67,14 +67,6 @@
           .scale(scale)
           .translate([mapWidth / 2, mapHeight / 2]);
 
-        //tooltip creation
-        // var Tooltip = svg
-        // .append("text")
-        // .style("opacity", 0)
-        // .attr("class", "tooltip")
-        // .attr("fill", "red")
-        // .attr("backgroundColor", "white");
-
         var div = d3.select("body").append("div")	
         .attr("class", "tooltip")	
         .style("position", "absolute")
