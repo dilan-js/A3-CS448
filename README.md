@@ -1,0 +1,3 @@
+This project was written for CS448B: Data Visualization at Stanford University. 
+
+Our visualization of restaurant inspection scores in the South Bay can be viewed locally by navigating to the unzipped directory, running a python server using python3 -m http.server, and viewing localhost:8000 in your browser. To prevent Honor Code violations, our team decided not to upload the link directly; however, demonstrations are available upon request.

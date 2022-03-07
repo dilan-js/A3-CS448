@@ -1,70 +1,79 @@
-<html> 
-<head> 
-<style>
-  body {
-    padding: 50px;
-  }
-  section{
-    display:block !important;
-  }
+<html>
 
-  .checkbox {
-    float: left !important;
-    width: 100px !important;
-  }
-  input {
-    text-decoration: none !important;
-  }
- 
-  #scoreFilters{
-    padding-top: 30px;
-  }
-  #circleRadii{
+<head>
+  <style>
+    body {
+      padding: 50px;
+    }
+
+    section {
+      display: block !important;
+    }
+
+    .checkbox {
+      float: left !important;
+      width: 100px !important;
+    }
+
+    input {
+      text-decoration: none !important;
+    }
+
+    #scoreFilters {
+      padding-top: 30px;
+    }
     
-  }
-  .flexDiv{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    max-width: 600px;
- 
-  }
-  #leftLabel1{
-    display: flex;
-    width: 60px;
-    padding-left: 20px;
-    padding-right: 10px;
-  }
-  #rightLabel1{
-    width: 100px;
-    padding-right: 20px;
-    padding-left: 10px;
-  }
-  .slider{
-    width: 300px;
-  }
-  #slider1{
-    width: 80%;
-  }
-  #slider2{
-    width: 80%;
-  }
-</style>
+    .flexDiv {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      max-width: 600px;
+
+    }
+
+    #leftLabel1 {
+      display: flex;
+      width: 60px;
+      padding-left: 20px;
+      padding-right: 10px;
+    }
+
+    #rightLabel1 {
+      width: 100px;
+      padding-right: 20px;
+      padding-left: 10px;
+    }
+
+    .slider {
+      width: 300px;
+    }
+
+    #slider1 {
+      width: 80%;
+    }
+
+    #slider2 {
+      width: 80%;
+    }
+  </style>
 
   <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script src="https://d3js.org/d3.v7.min.js"></script> 
- 
-</head> 
-    <body> 
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+</head>
+
+<body>
   <h1>South Bay Restaurant Inspection Score Finder</h1>
-  <p>  Dilan Nana, Dana Chiueh </p>
+  <p> Dilan Nana, Dana Chiueh </p>
   <p>Explore the restaurant inspection scores of all South Bay restaurants!
     Filter by zipcode, city or grade, and explore the interactive map by hovering to learn
-  about individual restaurants. Drag the circles around or adjust their radii with the sliders below.</p>
+    about individual restaurants. Drag the circles around or adjust their radii with the sliders below.</p>
 
-  <p>Please note that when a filter is applied, one must drag the circles to see the updated results. Automatic refresh is not enabled.</p>
+  <p>Please note that when a filter is applied, one must drag the circles to see the updated results. Automatic refresh
+    is not enabled.</p>
   <div id="circleRadii">
     <div>Green Circle</div>
     <div class="flexDiv">
@@ -78,11 +87,18 @@
       <div id="slider2"></div>
       <div id="rightLabel1">5 mi</div>
     </div>
-   
+
   </div>
-  <div id="zipcodes"><h4>Zipcode</h4></div>
-  <div id="cities"><h4>City</h4></div>
-  <div id="grades"><h4>Grade</h4></div>
-  <script src="script.js"> </script> 
-  </body> 
+  <div id="zipcodes">
+    <h4>Zipcode</h4>
+  </div>
+  <div id="cities">
+    <h4>City</h4>
+  </div>
+  <div id="grades">
+    <h4>Grade</h4>
+  </div>
+  <script src="script.js"> </script>
+</body>
+
 </html>
